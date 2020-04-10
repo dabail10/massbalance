@@ -8,8 +8,6 @@
 
 import numpy as np
 import glob
-from netCDF4 import Dataset
-from netCDF4 import MFDataset
 import datetime as dt
 import xarray as xr
 import cftime
