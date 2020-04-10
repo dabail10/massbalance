@@ -16,8 +16,8 @@ import numpy as np
 #--------------------------------------------
 
 # define input ascii data file
-indatafile='NCAR_CESM2f09g17_HIST_001_ice.txt'
-#indatafile='NCAR_CESM2f09g17_BL99_001_ice.txt'
+#indatafile='NCAR_CESM2f09g17_HIST_001_ice.txt'
+indatafile='NCAR_CESM2f09g17_BL99_001_ice.txt'
 #indatafile='NCAR_CESM2f09g17_MUSHY_001_ice.txt'
 
 # how many lines to skip in the header?
