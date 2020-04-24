@@ -54,7 +54,6 @@ fh = xr.open_dataset('arctic_region_mask_gx1v7.nc')
 masktmp = fh['mask']
 fh.close()
 mask = masktmp.rename({'ncl0': 'nj','ncl1': 'ni'})
-print(mask.dims)
 # areas
 maskFile = '/glade/p/cesm/omwg/grids/gx1v7_grid.nc'
 fh = xr.open_dataset(maskFile)
@@ -62,8 +61,6 @@ tareatmp = fh['TAREA']
 tlat = fh['TLAT'] 
 fh.close()
 tarea = tareatmp.rename({'nlon': 'ni','nlat': 'nj'})
-print(tarea.dims)
-
 tarea = tarea*1.0e-4
 
 #--------------------------------------------------------------------
@@ -143,8 +140,6 @@ for n in range(0,ntimes):
 #  mask = np.where((aice1 > 0.15) & (aice2 > 0.15) & (mask < 1.0e10),mask,0.0)
 
    thisVar1 = fh1.variables[budgetVars[0]][n,:,:]
-   print(thisVar1.dims)
-   print((thisVar1*tarea*mask).sum(dim=['ni','nj']))
    thisBudget[0] = (thisVar1*tarea*mask).sum(dim=['ni','nj'])
    thisVar2 = fh2.variables[budgetVars[1]][n,:,:]
    thisBudget[1] = (thisVar2*tarea*mask).sum(dim=['ni','nj'])
@@ -157,7 +152,7 @@ for n in range(0,ntimes):
    thisVar6 = fh6.variables[budgetVars[5]][n,:,:]
    thisBudget[5] = (thisVar6*tarea*mask).sum(dim=['ni','nj'])
    thisVar7 = fh7.variables[budgetVars[6]][n,:,:]
-   thisBudget[6] = (thisVar7*tarea*mask).sum(dim=['ni','nj'])
+   thisBudget[6] = (thisVar7*tarea*mask).sum(dim=['ni','nj'])/rhoi/dt
    thisVar8 = fh8.variables[budgetVars[7]][n,:,:]
    thisBudget[7] = (thisVar8*tarea*mask).sum(dim=['ni','nj'])
    #
