@@ -21,13 +21,15 @@ case = 'b.e21.B1850.f09_g17.CMIP6-piControl.001_bl99snow1'
 case2 = 'b.e21.B1850.f09_g17.CMIP6-piControl.001_snow1'
 path = '/glade/p/cesm/pcwg/dbailey/archive/'
 fileGlob = path+case+'/ice/proc/tseries/month_1/*sidmasslat*.nc'
-files = sorted(glob.glob(fileGlob))
+files = glob.glob(fileGlob)
 
 # derive dates from time_bounds array
 
-ds = xr.open_mfdataset(files)
+ds = xr.open_mfdataset(files,combine='by_coords')
 
 times = ds.time_bounds.values
+
+print(times)
 
 leftbounds_yr = [x[0].timetuple()[0] for x in times]
 leftbounds_mo = [x[0].timetuple()[1] for x in times]
@@ -96,28 +98,28 @@ data_fileh.write("\n")
 # then output to ascii file
 # open netcdf files
 
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthbot*.nc'))
-fh1 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthwat*.nc'))
-fh2 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmelttop*.nc'))
-fh3 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmeltbot*.nc'))
-fh4 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasslat*.nc'))
-fh5 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasssi*.nc'))
-fh6 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassevapsubl*.nc'))
-fh7 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassdyn*.nc'))
-fh8 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*aice.*.nc'))
-fh9 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case2+'/ice/proc/tseries/month_1/*aice.*.nc'))
-fh11 = xr.open_mfdataset(files)
-files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*hi.*.nc'))
-fh10 = xr.open_mfdataset(files)
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthbot*.nc')
+fh1 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthwat*.nc')
+fh2 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmelttop*.nc')
+fh3 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmeltbot*.nc')
+fh4 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasslat*.nc')
+fh5 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasssi*.nc')
+fh6 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassevapsubl*.nc')
+fh7 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassdyn*.nc')
+fh8 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*aice.*.nc')
+fh9 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case2+'/ice/proc/tseries/month_1/*aice.*.nc')
+fh11 = xr.open_mfdataset(files,combine='by_coords')
+files = glob.glob(path+case+'/ice/proc/tseries/month_1/*hi.*.nc')
+fh10 = xr.open_mfdataset(files,combine='by_coords')
 
 time = fh9.variables['time']
 ntimes = len(time)
