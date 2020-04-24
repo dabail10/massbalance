@@ -29,8 +29,6 @@ ds = xr.open_mfdataset(files)
 
 times = ds.time_bounds.values
 
-print(times)
-
 leftbounds_yr = [x[0].timetuple()[0] for x in times]
 leftbounds_mo = [x[0].timetuple()[1] for x in times]
 
@@ -52,15 +50,19 @@ budgetVars =   [
 # read in static fields: mask and grid-cell-areas
 #
 # mask
-fh = Dataset('arctic_region_mask_gx1v7.nc')
-mask = fh.variables['mask'][:,:]  
+fh = xr.open_dataset('arctic_region_mask_gx1v7.nc')
+masktmp = fh['mask']
 fh.close()
+mask = masktmp.rename({'ncl0': 'nj','ncl1': 'ni'})
+print(mask.dims)
 # areas
 maskFile = '/glade/p/cesm/omwg/grids/gx1v7_grid.nc'
-fh = Dataset(maskFile)
-tarea = fh.variables['TAREA'][:,:]  
-tlat = fh.variables['TLAT'][:,:]  
+fh = xr.open_dataset(maskFile)
+tareatmp = fh['TAREA']  
+tlat = fh['TLAT'] 
 fh.close()
+tarea = tareatmp.rename({'nlon': 'ni','nlat': 'nj'})
+print(tarea.dims)
 
 tarea = tarea*1.0e-4
 
@@ -98,27 +100,27 @@ data_fileh.write("\n")
 # open netcdf files
 
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthbot*.nc'))
-fh1 = MFDataset(files)
+fh1 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassgrowthwat*.nc'))
-fh2 = MFDataset(files)
+fh2 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmelttop*.nc'))
-fh3 = MFDataset(files)
+fh3 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassmeltbot*.nc'))
-fh4 = MFDataset(files)
+fh4 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasslat*.nc'))
-fh5 = MFDataset(files)
+fh5 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmasssi*.nc'))
-fh6 = MFDataset(files)
+fh6 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassevapsubl*.nc'))
-fh7 = MFDataset(files)
+fh7 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*sidmassdyn*.nc'))
-fh8 = MFDataset(files)
+fh8 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*aice.*.nc'))
-fh9 = MFDataset(files)
+fh9 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case2+'/ice/proc/tseries/month_1/*aice.*.nc'))
-fh11 = MFDataset(files)
+fh11 = xr.open_mfdataset(files)
 files = sorted(glob.glob(path+case+'/ice/proc/tseries/month_1/*hi.*.nc'))
-fh10 = MFDataset(files)
+fh10 = xr.open_mfdataset(files)
 
 time = fh9.variables['time']
 ntimes = len(time)
@@ -133,6 +135,7 @@ thisBudget = np.ma.masked_all([len(budgetVars)],dtype=float)
 rhoi = 917.
 dt = 1800.
 
+
 for n in range(0,ntimes):
    aice1 = fh9.variables['aice'][n,:,:]
    aice2 = fh11.variables['aice'][n,:,:]
@@ -140,21 +143,23 @@ for n in range(0,ntimes):
 #  mask = np.where((aice1 > 0.15) & (aice2 > 0.15) & (mask < 1.0e10),mask,0.0)
 
    thisVar1 = fh1.variables[budgetVars[0]][n,:,:]
-   thisBudget[0] = np.sum(thisVar1*tarea*mask,dtype=float)
+   print(thisVar1.dims)
+   print((thisVar1*tarea*mask).sum(dim=['ni','nj']))
+   thisBudget[0] = (thisVar1*tarea*mask).sum(dim=['ni','nj'])
    thisVar2 = fh2.variables[budgetVars[1]][n,:,:]
-   thisBudget[1] = np.sum(thisVar2*tarea*mask,dtype=float)
+   thisBudget[1] = (thisVar2*tarea*mask).sum(dim=['ni','nj'])
    thisVar3 = fh3.variables[budgetVars[2]][n,:,:]
-   thisBudget[2] = np.sum(-thisVar3*tarea*mask,dtype=float)
+   thisBudget[2] = -(thisVar3*tarea*mask).sum(dim=['ni','nj'])
    thisVar4 = fh4.variables[budgetVars[3]][n,:,:]
-   thisBudget[3] = np.sum(-thisVar4*tarea*mask,dtype=float)
+   thisBudget[3] = -(thisVar4*tarea*mask).sum(dim=['ni','nj'])
    thisVar5 = fh5.variables[budgetVars[4]][n,:,:]
-   thisBudget[4] = np.sum(-thisVar5*tarea*mask,dtype=float)
+   thisBudget[4] = -(thisVar5*tarea*mask).sum(dim=['ni','nj'])
    thisVar6 = fh6.variables[budgetVars[5]][n,:,:]
-   thisBudget[5] = np.sum(thisVar6*tarea*mask,dtype=float)
+   thisBudget[5] = (thisVar6*tarea*mask).sum(dim=['ni','nj'])
    thisVar7 = fh7.variables[budgetVars[6]][n,:,:]
-   thisBudget[6] = np.sum(thisVar7*tarea*mask,dtype=float)/rhoi/dt
+   thisBudget[6] = (thisVar7*tarea*mask).sum(dim=['ni','nj'])
    thisVar8 = fh8.variables[budgetVars[7]][n,:,:]
-   thisBudget[7] = np.sum(thisVar8*tarea*mask,dtype=float)
+   thisBudget[7] = (thisVar8*tarea*mask).sum(dim=['ni','nj'])
    #
    # sum all for total
    thisBudget[-1] = np.sum(thisBudget[0:-1])
